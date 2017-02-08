@@ -17,10 +17,12 @@
 //===----------------------------------------------------------------------===//
 //
 
+import Foundation
 import PerfectLib
 import PerfectHTTP
 import PerfectHTTPServer
 import PerfectSession
+import PerfectRequestLogger
 
 
 // An example request handler.
@@ -86,6 +88,23 @@ SessionConfig.idle = 60*60*24
 let sessionDriver = SessionMemoryDriver()
  */
 
+//MARK: Log
+let httpLogger = RequestLogger()
+
+let fileManager = FileManager.default
+
+if !fileManager.fileExists(atPath: logFile) {
+    do{
+        try fileManager.createDirectory(atPath: logDirectory, withIntermediateDirectories: true, attributes: nil)
+        RequestLogFile.location = logFile
+        print(logFile)
+    }catch{
+        NSLog("Error: create log file \(error.localizedDescription)")
+    }
+}
+
+print(NSHomeDirectory())
+
 //MARK: Server
 do {
 	// Launch the servers based on the configuration data.
@@ -96,6 +115,10 @@ do {
     //server.setRequestFilters([sessionDriver.requestFilter])
     //server.setResponseFilters([(Filter.filter404(), .high), sessionDriver.responseFilter])
     server.setResponseFilters([(Filter.filter404(), .high)])
+    //
+    server.setRequestFilters([(httpLogger, .high)])
+    server.setResponseFilters([(httpLogger, .high)])
+    //
     server.addRoutes(CustomRoutes.createRoutes())
     
     try server.start()

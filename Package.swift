@@ -25,6 +25,7 @@ let package = Package(
 	dependencies: [
 		.Package(url: "https://github.com/PerfectlySoft/Perfect-HTTPServer.git", majorVersion: 2),
 		.Package(url:"https://github.com/PerfectlySoft/Perfect-Session.git", majorVersion: 0, minor: 0),
-		.Package(url:"https://github.com/goodnighthsu/JSONWebToken.swift.git", majorVersion:2)
+		.Package(url:"https://github.com/goodnighthsu/JSONWebToken.swift.git", majorVersion:2),
+        .Package(url:"https://github.com/PerfectlySoft/Perfect-RequestLogger.git", majorVersion:1)
     ]
 )
