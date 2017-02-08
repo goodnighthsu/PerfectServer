@@ -107,7 +107,7 @@ class UserModel:JSONConvertibleObject, NSCoding{
         }
     }
     
-    @objc func save() -> Bool{
+    func save() -> Bool{
         let userData: Data = NSKeyedArchiver.archivedData(withRootObject: self)
         UserDefaults.standard.set(userData, forKey: "CurrentUser")
         return true
@@ -123,7 +123,7 @@ class UserModel:JSONConvertibleObject, NSCoding{
 //        return pinyin
 //    }
     
-    
+    /*
     //MARK: - 验证
     class func confirmAccount(_ inputString: String?) -> Bool {
         guard let account = inputString else {
@@ -198,6 +198,7 @@ class UserModel:JSONConvertibleObject, NSCoding{
         
         return true
     }
+ */
     
     //MARK: - Parse
     class func parseJSON(_ json: NSDictionary?) -> Any?{
@@ -399,9 +400,9 @@ class UserModel:JSONConvertibleObject, NSCoding{
             return
         }
         
-        if !UserModel.confirmAccount(account) || !UserModel.confirmPassword(password){
-            res.outputError("account or password error")
-        }
+//        if !UserModel.confirmAccount(account) || !UserModel.confirmPassword(password){
+//            res.outputError("account or password error")
+//        }
         
         //登入成功授权
         let user1 = UserModel()
