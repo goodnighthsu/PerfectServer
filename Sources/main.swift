@@ -20,6 +20,8 @@
 import PerfectLib
 import PerfectHTTP
 import PerfectHTTPServer
+import PerfectSession
+
 
 // An example request handler.
 // This 'handler' function can be referenced directly in the configuration below.
@@ -77,9 +79,27 @@ let confData = [
 	]
 ]
 
+/*
+//MARK: Session
+SessionConfig.name = "PerfectSession"
+SessionConfig.idle = 60*60*24
+let sessionDriver = SessionMemoryDriver()
+ */
+
+//MARK: Server
 do {
 	// Launch the servers based on the configuration data.
-	try HTTPServer.launch(configurationData: confData)
+	//let server = try HTTPServer.launch(configurationData: confData)
+    let server = HTTPServer()
+    server.serverPort = 8080
+    //不使用Session
+    //server.setRequestFilters([sessionDriver.requestFilter])
+    //server.setResponseFilters([(Filter.filter404(), .high), sessionDriver.responseFilter])
+    server.setResponseFilters([(Filter.filter404(), .high)])
+    server.addRoutes(CustomRoutes.createRoutes())
+    
+    try server.start()
+
 } catch {
 	fatalError("\(error)") // fatal error launching one of the servers
 }
