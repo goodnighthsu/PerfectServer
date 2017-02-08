@@ -13,11 +13,18 @@ class CustomRoutes{
     class func createRoutes() -> Routes{
         var routes = Routes()
         //MARK: User
-        routes.add(method: .get, uri: "/user/{id}", handler: UserModel.detail)
-        routes.add(method: .get, uri:"/user", handler: UserModel.list)
-        routes.add(method: .post, uri:"/login", handler: UserModel.login)
+//        routes.add(method: .get, uri: "/user/{id}", handler: UserModel.detail)
+        routes.add(method: .get, uri:"/user", handler: userList)
+//        routes.add(method: .post, uri:"/login", handler: UserModel.login)
         
         return routes
     }
+    
+    static let userList: RequestHandler = { req, res in
+        res.validate()
+        res.output("user")
+        res.completed()
+    }
+
 }
 
