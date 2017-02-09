@@ -103,14 +103,14 @@ if !fileManager.fileExists(atPath: logFile) {
     }
 }
 
-print(NSHomeDirectory())
-
 //MARK: Server
 do {
 	// Launch the servers based on the configuration data.
 	//let server = try HTTPServer.launch(configurationData: confData)
     let server = HTTPServer()
     server.serverPort = 8080
+    //Static File
+    server.documentRoot = documentRoot
     //不使用Session
     //server.setRequestFilters([sessionDriver.requestFilter])
     //server.setResponseFilters([(Filter.filter404(), .high), sessionDriver.responseFilter])
@@ -120,8 +120,11 @@ do {
     server.setResponseFilters([(httpLogger, .high)])
     //
     server.addRoutes(CustomRoutes.createRoutes())
+
+    
     
     try server.start()
+    
 
 } catch {
 	fatalError("\(error)") // fatal error launching one of the servers

@@ -13,9 +13,11 @@ let JWTSecret = "Leon Perfect"
 
 //MARK: Web
 #if os(Linux)
-    let rootDirectory = NSHomeDirectory() + "/perfectServer"
+    let rootDirectory = "/home/perfectServer/"
+    let documentRoot = "/home/perfectServer/webroot"
 #else
     let rootDirectory = NSHomeDirectory() + "/perfectServer"
+    let documentRoot = "./webroot"
 #endif
 
 let logDirectory = rootDirectory + "/log"
