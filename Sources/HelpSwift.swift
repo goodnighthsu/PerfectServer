@@ -12,8 +12,8 @@ extension String{
     //MARK: String to Int
     var intValue: Int {
         get{
-            let string = self as NSString
-            return Int(string.integerValue)
+            let number = self.toInt() ?? 0
+            return number
         }
     }
 }

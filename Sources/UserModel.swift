@@ -266,7 +266,7 @@ class UserModel:JSONConvertibleObject, NSCoding{
         res.validate()
         
         var page: String = req.param(name: "page", defaultValue: "0")!
-        let pageSize = req.param(name: "pagesize", defaultValue: "30")!
+        let pageSize:String = req.param(name: "pagesize", defaultValue: "30")!
         page = "\(page.intValue * pageSize.intValue)"
         
         let stORM = MySQLStORM()
