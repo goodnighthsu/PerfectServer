@@ -10,10 +10,11 @@ import Foundation
 import PerfectLib
 import PerfectHTTP
 import JWT
+import StORM
+import MySQLStORM
 
 //用户模型
 class UserModel:JSONConvertibleObject, NSCoding{
-
     public func encode(with aCoder: NSCoder) {
         aCoder.encode(self.sID, forKey: "sID")
         
@@ -44,10 +45,10 @@ class UserModel:JSONConvertibleObject, NSCoding{
         eMail = aDecoder.decodeObject(forKey: "eMail") as? String
     }
     
-    override init(){
+    required override init(){
         super.init()
     }
-
+    
     var sID: String?                    //user_id: Int
     var companyID: String?              //company_id: Int
     var teamID: String?                 //team_id: Int
@@ -56,7 +57,7 @@ class UserModel:JSONConvertibleObject, NSCoding{
     var nickname: String?               //user_nick
     var trueName: String?               //true_name
     var portraitURLString: String?      //
-//    var portraitImage: UIImage?         //
+    //    var portraitImage: UIImage?         //
     var gender: Int?                    //sex
     var birthday: Date?
     var age: Int?
@@ -84,7 +85,7 @@ class UserModel:JSONConvertibleObject, NSCoding{
     
     var families: [UserModel]?          //亲属
     var relation: String?               //亲属关系
-
+    
     var isSign: Bool?                           //is_sign Int
     var isExperience: Bool?                      //is_experience: Int
     var flightDate: Date?                       //flight_date: String
@@ -112,263 +113,150 @@ class UserModel:JSONConvertibleObject, NSCoding{
         UserDefaults.standard.set(userData, forKey: "CurrentUser")
         return true
     }
-
-//    //MARK: 返回名字trueName的拼音
-//    func getPinyin() -> String? {
-//        guard let name = self.trueName else {
-//            return nil
-//        }
-//        let format = HanyuPinyinOutputFormat()
-//        let pinyin = PinyinHelper.toHanyuPinyinString(with: name, with: format, with: " ")
-//        return pinyin
-//    }
+    
+    //    //MARK: 返回名字trueName的拼音
+    //    func getPinyin() -> String? {
+    //        guard let name = self.trueName else {
+    //            return nil
+    //        }
+    //        let format = HanyuPinyinOutputFormat()
+    //        let pinyin = PinyinHelper.toHanyuPinyinString(with: name, with: format, with: " ")
+    //        return pinyin
+    //    }
     
     /*
-    //MARK: - 验证
-    class func confirmAccount(_ inputString: String?) -> Bool {
-        guard let account = inputString else {
-            return false
-        }
-        
-        //非符号开头的6-18位字符
-        let regex = try? NSRegularExpression(pattern: "[a-zA-Z0-9._]{6,18}$", options: .caseInsensitive)
-        
-        guard  let reg = regex else {
-            return false
-        }
-        
-        let matches = reg.matches(in: account, options: .reportCompletion, range: NSMakeRange(0, account.characters.count))
-        if matches.count == 0{
-            return false
-        }
-        return true
+     //MARK: - 验证
+     class func confirmAccount(_ inputString: String?) -> Bool {
+     guard let account = inputString else {
+     return false
+     }
+     
+     //非符号开头的6-18位字符
+     let regex = try? NSRegularExpression(pattern: "[a-zA-Z0-9._]{6,18}$", options: .caseInsensitive)
+     
+     guard  let reg = regex else {
+     return false
+     }
+     
+     let matches = reg.matches(in: account, options: .reportCompletion, range: NSMakeRange(0, account.characters.count))
+     if matches.count == 0{
+     return false
+     }
+     return true
+     }
+     
+     class func confirmPassword(_ password: String?) -> Bool {
+     guard let pwd = password else {
+     return false
+     }
+     
+     //非符号开头的6-18位字符
+     let regex = try? NSRegularExpression(pattern: "[a-zA-Z0-9]{6,18}$", options: .caseInsensitive)
+     
+     guard  let reg = regex else {
+     return false
+     }
+     
+     let matches = reg.matches(in: pwd, options: .reportCompletion, range: NSMakeRange(0, pwd.characters.count))
+     if matches.count == 0{
+     return false
+     }
+     return true
+     }
+     
+     class func confirmMobile(_ mobile: String) -> Bool{
+     if mobile.characters.count == 0{
+     return false
+     }
+     let regex = try? NSRegularExpression(pattern: "[0-9]", options: .caseInsensitive)
+     guard let _ = regex else{
+     return false
+     }
+     
+     let matches = regex!.matches(in: mobile, options: .reportCompletion, range: NSMakeRange(0, mobile.characters.count))
+     if matches.count == 0{
+     return false
+     }
+     
+     return true
+     }
+     
+     
+     
+     class func confirmEmail(_ email: String) -> Bool{
+     if email.characters.count == 0{
+     return false
+     }
+     let regex = try? NSRegularExpression(pattern: "\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*", options: .caseInsensitive)
+     guard let _ = regex else{
+     return false
+     }
+     
+     let matches = regex!.matches(in: email, options: .reportCompletion, range: NSMakeRange(0, email.characters.count))
+     if matches.count == 0{
+     return false
+     }
+     
+     return true
+     }
+     */
+    
+    
+    //MARK: - JSONConvertable
+    static let registerName = "UserModel"
+    override public func setJSONValues(_ values: [String: Any]){
+        self.sID = (values["id"] as? NSNumber)?.stringValue
+        self.account = values["account"] as? String
+        self.trueName = values["trueName"] as? String
+        self.mobile = values["mobile"] as? String
     }
     
-    class func confirmPassword(_ password: String?) -> Bool {
-        guard let pwd = password else {
-            return false
+    override public func getJSONValues() -> [String : Any] {
+        var dic = [String: Any]()
+        if let _sID = sID{
+            dic["id"] = _sID
+        }
+        if let _account = account{
+            dic["account"] = _account
+        }
+        if let _trueName = trueName{
+            dic["trueName"] = _trueName
+        }
+        if let _mobile = mobile{
+            dic["mobile"] = _mobile
         }
         
-        //非符号开头的6-18位字符
-        let regex = try? NSRegularExpression(pattern: "[a-zA-Z0-9]{6,18}$", options: .caseInsensitive)
-        
-        guard  let reg = regex else {
-            return false
-        }
-        
-        let matches = reg.matches(in: pwd, options: .reportCompletion, range: NSMakeRange(0, pwd.characters.count))
-        if matches.count == 0{
-            return false
-        }
-        return true
+        return dic
     }
     
-    class func confirmMobile(_ mobile: String) -> Bool{
-        if mobile.characters.count == 0{
-            return false
-        }
-        let regex = try? NSRegularExpression(pattern: "[0-9]", options: .caseInsensitive)
-        guard let _ = regex else{
-            return false
-        }
-        
-        let matches = regex!.matches(in: mobile, options: .reportCompletion, range: NSMakeRange(0, mobile.characters.count))
-        if matches.count == 0{
-            return false
-        }
-        
-        return true
-    }
-    
-
-    
-    class func confirmEmail(_ email: String) -> Bool{
-        if email.characters.count == 0{
-            return false
-        }
-        let regex = try? NSRegularExpression(pattern: "\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*", options: .caseInsensitive)
-        guard let _ = regex else{
-            return false
-        }
-        
-        let matches = regex!.matches(in: email, options: .reportCompletion, range: NSMakeRange(0, email.characters.count))
-        if matches.count == 0{
-            return false
-        }
-        
-        return true
-    }
- */
-    
-    //MARK: - Parse
-    class func parseJSON(_ json: NSDictionary?) -> Any?{
-        guard let dic = json else{
+    //MARK: - Parse JSON
+    class func parseDic(_ dic: Dictionary<String, Any>?) -> UserModel?{
+        guard let values = dic else{
             return nil
         }
-        
         let model = UserModel()
-        model.sID = (dic["user_id"] as? NSNumber)?.stringValue
-        model.account = dic["account"] as? String
-        model.nickname = dic["user_nick"] as? String
-        model.companyID = (dic["company_id"] as? NSNumber)?.stringValue
-        model.companyID = (dic["team_id"] as? NSNumber)?.stringValue
-
-        model.portraitURLString = dic["head_img"] as? String
-        model.trueName = dic["true_name"] as? String
-        model.gender = (dic["sex"] as? NSNumber)?.intValue
+        model.sID = (values["id"] as? NSNumber)?.stringValue
+        model.account  = values["account"] as? String
+        model.trueName = values["trueName"] as? String
+        model.mobile  = values["mobile"] as? String
         
-        //
-        let birthdayDate = (dic["birth_date"] as? NSNumber)?.doubleValue
-        if birthdayDate != nil{
-            model.birthday =  Date(timeIntervalSince1970: birthdayDate!)
-        }
-        
-        model.mobile = dic["mobile"] as? String
-        model.eMail = dic["e_mail"] as? String
-        
-        //AddressModel
-        let address = AddressModel()
-        address.province = dic["province"] as? String
-        address.city = dic["city"] as? String
-        address.area = dic["area"] as? String
-        address.address = dic["address"] as? String
-        model.address = address
-        
-        //
-        model.wechatID = dic["wechat_number"] as? String
-        model.qqID = dic["qq_number"] as? String
-        
-        //
-        model.job = dic["job"] as? String
-        model.income = dic["income"] as? NSNumber
-        
-        //亲属
-        if let familyName = dic["family_name"] as? String{
-            let user = UserModel()
-            user.trueName = familyName
-            if let relation = dic["family_relationship"] as? String{
-                user.relation = relation
-            }
-            if let fMobile = dic["family_mobile"] as? String{
-                user.mobile = fMobile
-            }
-            model.families = [UserModel]()
-            model.families?.append(user)
-        }
-        
-        //
-        model.cardID = dic["card_id"] as? String
-        model.passportID = dic["passport_id"] as? String
-        model.passportCountry = dic["passport_country"] as? String
         return model
     }
     
-    
-    class func parseCustomerDetailJSON(_ json: NSDictionary?) -> Any?{
-        guard let dic = json else{
-            return nil
-        }
-        
-        let model = UserModel()
-        model.sID = (dic["customer_id"] as? NSNumber)?.stringValue
-        model.nickname = dic["customer_nick"] as? String
-        
-        model.companyID = (dic["company_id"] as? NSNumber)?.stringValue
-        model.portraitURLString = dic["head_img"] as? String
-        model.trueName = dic["true_name"] as? String
-        model.gender = (dic["sex"] as? NSNumber)?.intValue
-        
-        //
-        let birthdayDate = (dic["birth_date"] as? NSNumber)?.doubleValue
-        if birthdayDate != nil{
-            model.birthday =  Date(timeIntervalSince1970: birthdayDate!)
-        }
-        
-        model.mobile = dic["mobile"] as? String
-        model.eMail = dic["e_mail"] as? String
-        
-        //AddressModel
-        let address = AddressModel()
-        address.province = dic["province"] as? String
-        address.city = dic["city"] as? String
-        address.district = dic["area"] as? String
-        address.address = dic["address"] as? String
-        model.address = address
-        
-        //
-        model.wechatID = dic["wechat_number"] as? String
-        model.qqID = dic["qq_number"] as? String
-        
-        //
-        model.job = dic["job"] as? String
-        model.income = dic["income"] as? NSNumber
-        
-        //亲属
-        if let familyName = dic["family_name"] as? String{
-            let user = UserModel()
-            user.trueName = familyName
-            if let relation = dic["family_relationship"] as? String{
-                user.relation = relation
-            }
-            if let fMobile = dic["family_mobile"] as? String{
-                user.mobile = fMobile
-            }
-            model.families = [UserModel]()
-            model.families?.append(user)
-        }
-        
-        //
-        model.cardID = dic["card_id"] as? String
-        model.passportID = dic["passport_id"] as? String
-        model.passportCountry = dic["passport_country"] as? String
-        return model
-    }
-    
-    class func parseCustomerListJSON(_ json: NSDictionary?) -> Any?{
-        guard let dic = json else{
-            return nil
-        }
-        
-        let model = UserModel()
-        model.sID = (dic["customer_id"] as? NSNumber)?.stringValue
-        model.companyID = (dic["company_id"] as? NSNumber)?.stringValue
-        model.trueName = dic["true_name"] as? String
-        model.portraitURLString = dic["head_img"] as? String
-        return model
-    }
-    
-    
-    //MARK: - API
-    override func getJSONValues() -> [String : Any] {
-        var modelDic = [String: Any]()
-        if let sID = self.sID {
-            modelDic["id"] = sID
-        }
-        
-        if let trueName = self.trueName {
-            modelDic["trueName"] = trueName
-        }
-        
-        if let mobile = self.mobile {
-            modelDic["mobile"] = mobile
-        }
-        
-        return modelDic
-    }
-    
-    
+    //MARK: - Request
     //MARK: 用户详情
     static let detail: RequestHandler = { req, res in
-        let userID: String? = req.urlVariables["id"]
-        guard let id = userID else{
+        var userID: NSNumber?
+
+        guard let idString = req.urlVariables["id"] else{
             res.outputError("\(req.path) need 'id'")
             res.completed()
             return
         }
         let user = UserModel()
-        user.sID = id
+        user.sID = idString
         res.output(user)
-
+        
         res.completed()
     }
     
@@ -376,16 +264,23 @@ class UserModel:JSONConvertibleObject, NSCoding{
     static let list: RequestHandler = { req, res in
         res.validate()
         
-        let user1 = UserModel()
-        user1.sID = "1"
-        user1.trueName = "leon"
-        user1.mobile = "13917051234"
+        var page: String = req.param(name: "page", defaultValue: "0")!
+        let pageSize = req.param(name: "pageSize", defaultValue: "30")!
+        page = "\(page.intValue * pageSize.intValue)"
         
-        let user2 = UserModel()
-        user2.sID = "2"
-        user2.trueName = "shine"
+        let stORM = MySQLStORM()
+        do {
+            let results = try stORM.sqlRows("SELECT * FROM USER_TABLE limit ?,?", params: [page, pageSize])
+            let models: [UserModel?] = results.map{
+//                $0.data["_jsonobjid"] = UserModel.registerName
+                let user = UserModel.parseDic($0.data)
+                return user
+            }
+            res.output(["datas":models, "total": stORM.results.foundSetCount])
+        }catch{
+            res.outputError("\(error)")
+        }
         
-        res.output([user1, user2])
         res.completed()
     }
     
@@ -400,9 +295,9 @@ class UserModel:JSONConvertibleObject, NSCoding{
             return
         }
         
-//        if !UserModel.confirmAccount(account) || !UserModel.confirmPassword(password){
-//            res.outputError("account or password error")
-//        }
+        //        if !UserModel.confirmAccount(account) || !UserModel.confirmPassword(password){
+        //            res.outputError("account or password error")
+        //        }
         
         //登入成功授权
         let user1 = UserModel()
@@ -419,5 +314,22 @@ class UserModel:JSONConvertibleObject, NSCoding{
         res.addCookie(cookie)
         
         res.output("success")
+    }
+    
+    //MARK: Regist
+    static let regist: RequestHandler = { req, res in
+        guard let account = req.param(name: "account") else{
+            res.outputError("account can not be null")
+            return
+        }
+        
+        guard let password = req.param(name: "password") else{
+            res.outputError("password can not be null")
+            return
+        }
+        
+        let user = UserModel()
+        user.account = account
+        user.password = password
     }
 }

@@ -22,3 +22,10 @@ let JWTSecret = "Leon Perfect"
 
 let logDirectory = rootDirectory + "/log"
 let logFile = logDirectory + "/perfectLog.log"
+
+//MAKR: MySql
+let mySqlHost = "127.0.0.1"
+let mySqlUserName = "root"
+let mySqlPassword = "a123456"
+let mySqlDatabase = "Perfect"
+let mySqlPort = 3306

@@ -23,6 +23,8 @@ import PerfectHTTP
 import PerfectHTTPServer
 import PerfectSession
 import PerfectRequestLogger
+import StORM
+import MySQLStORM
 
 
 // An example request handler.
@@ -102,6 +104,21 @@ if !fileManager.fileExists(atPath: logFile) {
         NSLog("Error: create log file \(error.localizedDescription)")
     }
 }
+
+//MARK: Mysql
+func initMysql(){
+    MySQLConnector.host = mySqlHost
+    MySQLConnector.username = mySqlUserName
+    MySQLConnector.password = mySqlPassword
+    MySQLConnector.database = mySqlDatabase
+    MySQLConnector.port = mySqlPort
+}
+
+initMysql()
+
+//Regist Model
+JSONDecoding.registerJSONDecodable(name: UserModel.registerName, creator: { return UserModel() })
+
 
 //MARK: Server
 do {

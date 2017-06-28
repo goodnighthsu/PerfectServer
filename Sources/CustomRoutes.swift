@@ -16,6 +16,7 @@ class CustomRoutes{
         routes.add(method: .get, uri: "/user/{id}", handler: UserModel.detail)
         routes.add(method: .get, uri:"/user", handler: UserModel.list)
         routes.add(method: .post, uri:"/login", handler: UserModel.login)
+        routes.add(method: .post, uri:"/regist", handler: UserModel.regist)
         
         return routes
     }

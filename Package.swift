@@ -24,8 +24,10 @@ let package = Package(
 	targets: [],
 	dependencies: [
 		.Package(url: "https://github.com/PerfectlySoft/Perfect-HTTPServer.git", majorVersion: 2),
-		.Package(url:"https://github.com/PerfectlySoft/Perfect-Session.git", majorVersion: 0, minor: 0),
+		.Package(url:"https://github.com/PerfectlySoft/Perfect-Session.git", majorVersion: 1, minor: 0),
 		.Package(url:"https://github.com/goodnighthsu/JSONWebToken.swift.git", majorVersion:2),
-        .Package(url:"https://github.com/PerfectlySoft/Perfect-RequestLogger.git", majorVersion:1)
+		.Package(url:"https://github.com/PerfectlySoft/Perfect-RequestLogger.git", majorVersion:1),
+		.Package(url:"https://github.com/SwiftORM/MySQL-StORM",  majorVersion:1),
+		.Package(url:"https://github.com/Hearst-DD/ObjectMapper.git", majorVersion: 2, minor: 2)
     ]
 )

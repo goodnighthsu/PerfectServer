@@ -15,10 +15,12 @@ extension HTTPResponse{
     //格式化输出
     func output(_ obj: Any) {
         self.setHeader(.contentType, value: "application/json")
+        
         let resultDic: [String: Any] = ["code": 1, "result":obj]
         do {
-            let jsonString = try resultDic.jsonEncodedString()
-            self.appendBody(string: jsonString)
+            let encoded = try resultDic.jsonEncodedString()
+            self.appendBody(string: encoded)
+
         }catch{
             self.outputError(error.localizedDescription)
         }
