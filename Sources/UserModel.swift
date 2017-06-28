@@ -205,10 +205,11 @@ class UserModel:JSONConvertibleObject, NSCoding{
     //MARK: - JSONConvertable
     static let registerName = "UserModel"
     override public func setJSONValues(_ values: [String: Any]){
-        self.sID = (values["id"] as? NSNumber)?.stringValue
+        self.sID = (values["user_id"] as? NSNumber)?.stringValue
         self.account = values["account"] as? String
-        self.trueName = values["trueName"] as? String
+//        self.trueName = values["trueName"] as? String
         self.mobile = values["mobile"] as? String
+        self.eMail = values["e_mail"] as? String
     }
     
     override public func getJSONValues() -> [String : Any] {
@@ -219,11 +220,11 @@ class UserModel:JSONConvertibleObject, NSCoding{
         if let _account = account{
             dic["account"] = _account
         }
-        if let _trueName = trueName{
-            dic["trueName"] = _trueName
-        }
         if let _mobile = mobile{
             dic["mobile"] = _mobile
+        }
+        if let _eMail = eMail{
+            dic["eMail"] = _eMail
         }
         
         return dic
@@ -235,10 +236,10 @@ class UserModel:JSONConvertibleObject, NSCoding{
             return nil
         }
         let model = UserModel()
-        model.sID = (values["id"] as? NSNumber)?.stringValue
+        model.sID = (values["user_id"] as? NSNumber)?.stringValue
         model.account  = values["account"] as? String
-        model.trueName = values["trueName"] as? String
         model.mobile  = values["mobile"] as? String
+        model.eMail  = values["e_mail"] as? String
         
         return model
     }
@@ -265,18 +266,20 @@ class UserModel:JSONConvertibleObject, NSCoding{
         res.validate()
         
         var page: String = req.param(name: "page", defaultValue: "0")!
-        let pageSize = req.param(name: "pageSize", defaultValue: "30")!
+        let pageSize = req.param(name: "pagesize", defaultValue: "30")!
         page = "\(page.intValue * pageSize.intValue)"
         
         let stORM = MySQLStORM()
         do {
-            let results = try stORM.sqlRows("SELECT * FROM USER_TABLE limit ?,?", params: [page, pageSize])
+            let results = try stORM.sqlRows("SELECT * FROM jrk_user ORDER BY user_id DESC limit ?,?", params: [page, pageSize])
             let models: [UserModel?] = results.map{
 //                $0.data["_jsonobjid"] = UserModel.registerName
                 let user = UserModel.parseDic($0.data)
                 return user
             }
-            res.output(["datas":models, "total": stORM.results.foundSetCount])
+            let totalResults = try stORM.sqlRows("SELECT COUNT(user_id) FROM jrk_user", params: [])
+            let total = totalResults[0].data["COUNT(user_id)"] as? NSNumber ?? 0
+            res.output(["total": total.intValue, "datas":models])
         }catch{
             res.outputError("\(error)")
         }

@@ -44,7 +44,7 @@ func handler(data: [String:Any]) throws -> RequestHandler {
 // This example configuration shows how to launch one or more servers 
 // using a configuration dictionary.
 
-let port1 = 8080, port2 = 8181
+let port1 = UInt16(8089), port2 = 8181
 
 let confData = [
 	"servers": [
@@ -125,7 +125,7 @@ do {
 	// Launch the servers based on the configuration data.
 	//let server = try HTTPServer.launch(configurationData: confData)
     let server = HTTPServer()
-    server.serverPort = 8080
+    server.serverPort = port1
     //Static File
     server.documentRoot = documentRoot
     //不使用Session

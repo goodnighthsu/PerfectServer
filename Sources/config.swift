@@ -24,8 +24,16 @@ let logDirectory = rootDirectory + "/log"
 let logFile = logDirectory + "/perfectLog.log"
 
 //MAKR: MySql
+#if os(Linux)
+let mySqlHost = "127.0.0.1"
+let mySqlUserName = "root"
+let mySqlPassword = "Wxgoogle123"
+let mySqlDatabase = "crm_0223"
+let mySqlPort = 3306
+#else
 let mySqlHost = "127.0.0.1"
 let mySqlUserName = "root"
 let mySqlPassword = "a123456"
-let mySqlDatabase = "Perfect"
+let mySqlDatabase = "crm_0223"
 let mySqlPort = 3306
+#endif
