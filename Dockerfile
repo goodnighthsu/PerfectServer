@@ -1,9 +1,8 @@
-# Copyright (C) 2016 PerfectlySoft Inc.
-# Author: Shao Miller <swiftcode@synthetel.com>
+# Author: LeonXu
+# https://github.com/goodnighthsu/perfectdocker
+# Install swift:3.0.2 perfect mysql
 
-FROM perfectlysoft/ubuntu1510
-RUN /usr/src/Perfect-Ubuntu/install_swift.sh --sure
-RUN git clone https://github.com/PerfectlySoft/PerfectTemplate /usr/src/PerfectTemplate
-WORKDIR /usr/src/PerfectTemplate
-RUN swift build
-CMD .build/debug/PerfectTemplate --port 80
+FROM swift:3.0.2
+RUN apt-get update -q
+RUN apt-get install openssl libssl-dev uuid-dev -q -y
+RUN apt-get install libmysqlclient-dev -q -y

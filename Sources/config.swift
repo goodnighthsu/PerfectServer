@@ -13,10 +13,10 @@ let JWTSecret = "Leon Perfect"
 
 //MARK: Web
 #if os(Linux)
-    let rootDirectory = "/home/perfectServer/"
-    let documentRoot = "/home/perfectServer/webroot"
+    let rootDirectory = "/home/PerfectServer/"
+    let documentRoot = "/home/PerfectServer/webroot"
 #else
-    let rootDirectory = NSHomeDirectory() + "/perfectServer"
+    let rootDirectory = NSHomeDirectory() + "/PerfectServer"
     let documentRoot = "./webroot"
 #endif
 
@@ -25,7 +25,7 @@ let logFile = logDirectory + "/perfectLog.log"
 
 //MAKR: MySql
 #if os(Linux)
-let mySqlHost = "127.0.0.1"
+let mySqlHost = "192.168.42.1"
 let mySqlUserName = "root"
 let mySqlPassword = "Wxgoogle123"
 let mySqlDatabase = "crm_0223"
